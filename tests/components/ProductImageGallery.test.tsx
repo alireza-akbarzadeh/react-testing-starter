@@ -9,6 +9,7 @@ describe("ProductImageGallery", () => {
   it("should render a list of images", () => {
     const imageAUrl = ["url1", "url2"];
     render(<ProductImageGallery imageUrls={imageAUrl} />);
+    <div className=""></div>;
     const images = screen.getAllByRole("img");
     expect(images).toHaveLength(2);
     imageAUrl.forEach((url, index) => {
