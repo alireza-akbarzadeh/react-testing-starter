@@ -1,8 +1,7 @@
-import Onboarding from "../components/Onboarding";
-import TermsAndConditions from "../components/TermsAndConditions";
+import OrderStatusSelector from "../components/OrderStatusSelector";
 
 const PlaygroundPage = () => {
-  return <TermsAndConditions />;
+  return <OrderStatusSelector onChange={console.log} />;
 };
 
 export default PlaygroundPage;
