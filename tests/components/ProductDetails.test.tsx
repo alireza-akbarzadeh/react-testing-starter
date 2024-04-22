@@ -1,28 +1,40 @@
 import { render, screen } from "@testing-library/react";
 import ProductDetail from "../../src/components/ProductDetail";
-import { server } from "../mocks/server";
 
 import { http, HttpResponse } from "msw";
-import { products } from "../mocks/data";
+import { db } from "../mocks/db";
+import { server } from "../mocks/server";
 
 describe("ProductDetails", () => {
-  //   it("should render error if the id is not valid", async () => {
-  //     server.use(
-  //       http.get("/products/:id", () => new HttpResponse(null, { status: 404 }))
-  //     );
-  //     render(<ProductDetail productId={0} />);
-  //     const error = await screen.findByText(/Invalid/i);
-  //     expect(error).toBeInTheDocument();
-  //   });
+  let productId: number;
 
-  it("should render the list of product", async () => {
-    render(<ProductDetail productId={1} />);
+  beforeAll(() => {
+    const product = db.product.create();
+    productId = product.id;
+  });
+  afterAll(() => {
+    db.product.delete({ where: { id: { equals: productId } } });
+  });
 
-    expect(
-      await screen.findByText(new RegExp(products[0].name))
-    ).toBeInTheDocument();
-    expect(
-      await screen.findByText(new RegExp(products[0].name))
-    ).toBeInTheDocument();
+  it("should render the list of product details", async () => {
+    const product = db.product.findFirst({
+      where: { id: { equals: productId } },
+    });
+    render(<ProductDetail productId={productId} />);
+
+    expect(await screen.findByText(product!.name)).toBeInTheDocument();
+    expect(await screen.findByText(product!.price)).toBeInTheDocument();
+  });
+
+  it("should render if product not found", async () => {
+    server.use(http.get("/products/:id", () => HttpResponse.json(null)));
+    render(<ProductDetail productId={productId} />);
+    const message = await screen.findByText(/not found/i);
+    expect(message).toBeInTheDocument();
+  });
+  it("should render and error for invalid product id", async () => {
+    render(<ProductDetail productId={0} />);
+    const error = await screen.findByText(/invalid/i);
+    expect(error).toBeInTheDocument();
   });
 });
