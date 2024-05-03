@@ -13,13 +13,3 @@ export const simulateDelay = (endpoint: string) => {
 export const simulateError = (endpoint: string) => {
   server.use(http.get(endpoint, () => HttpResponse.error()));
 };
-
-type FocusInput = {
-  form: {
-    nameInput: HTMLElement;
-    priceInput: HTMLElement;
-    categoryInput: HTMLElement;
-    submitButton: HTMLElement;
-  };
-  input: string | number | undefined;
-};
